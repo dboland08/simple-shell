@@ -228,6 +228,32 @@ int main()
 
             continue;
         }
+
+        // display a help menu
+        if (strcmp(args[0], "H") == 0)
+        {
+            cout << "\nLIST OF COMMANDS: \n\n";
+            cout << "<C file1 file> |\n";
+            cout << "  Copy; create file2, copy all bytes of file1 to file2 without deleting file1\n";
+            cout << "<D file>\n";
+            cout << "  Delete the named file\n";
+            cout << "<E comment>\n";
+            cout << "  Display comment on screen followed by a newline\n";
+            cout << "<H>\n";
+            cout << "  Help, display the user manual\n";
+            cout << "<L>\n";
+            cout << "  List the contents of the directory\n";
+            cout << "<M file>\n";
+            cout << "  Make; create the named text file by launching nano\n";
+            cout << "<P file>\n";
+            cout << "  Print; display the contents of the named file on screen\n";
+            cout << "<Q>\n";
+            cout << "  Quit the shell\n";
+            cout << "<W>\n";
+            cout << "  Wipe; clear the screen\n";
+            cout << "<X program>\n";
+            cout <<"  Execute the named program\n";
+        }
     }
     return 0;
 }
