@@ -33,16 +33,25 @@ Any other command typed without a built-in prefix will be executed directly usin
 
 ---
 
-## How to Compile and run
+## How to Compile and Run
 
-1. Open a Linux terminal in the project directory.  
-2. Compile the source code using the provided Makefile:
+1. Open a Linux terminal in the project directory.
+2. Ensure g++ is installed
+3. Compile the source code using the provided Makefile:
 
 ```bash
 make
 ```
-3. Run the shell with
+4. Run the shell with
 
 ```bash
 make run
+# or
+./shell
 ```
+## Citations
+
+https://www.digitalocean.com/community/tutorials/execvp-function-c-plus-plus
+https://medium.com/@vkprajapati665/building-your-own-shell-in-c-because-why-not-614d00921044
+https://brennan.io/2015/01/16/write-a-shell-in-c/
+https://man7.org/linux/man-pages/man2/fork.2.html
