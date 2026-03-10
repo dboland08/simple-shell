@@ -200,6 +200,34 @@ int main()
 
             continue;
         }
+
+        // delete a file
+        if (strcmp(args[0], "D") == 0)
+        {
+            if (i < 2) // check if filename is provided
+            {
+                cout << "Usage: D filename" << endl;
+                continue;
+            }
+
+            int pid = fork();
+
+            if (pid == 0)
+            {
+                char *cpArgs[] = {(char *)"rm", args[1], NULL};
+                execvp("rm", cpArgs);
+            }
+            else if (pid >= 0)
+            {
+                wait(NULL);
+            }
+            else
+            {
+                perror("fork failed");
+            }
+
+            continue;
+        }
     }
     return 0;
 }
