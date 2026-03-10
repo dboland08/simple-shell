@@ -134,7 +134,38 @@ int main()
 
             continue;
         }
-        
+        // built-in command P
+        if (strcmp(args[0], "P") == 0)
+        {
+            if (i < 2) // no filename provided
+            {
+                cout << "Usage: P filename" << endl;
+                continue;
+            }
+
+            int pid = fork();
+
+            if (pid == 0) // child process
+            {
+                // prepare arguments for 'more'
+                char *moreArgs[] = {(char *)"more", args[1], NULL};
+                execvp("more", moreArgs);
+
+                // if execvp fails
+                perror("more failed");
+                exit(1);
+            }
+            else if (pid > 0) // parent process
+            {
+                wait(NULL); // wait until the child process exits
+            }
+            else
+            {
+                perror("fork failed");
+            }
+
+            continue;
+        }
     }
     return 0;
 }
