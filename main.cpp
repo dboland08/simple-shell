@@ -286,6 +286,24 @@ int main()
 
             continue;
         }
+
+        // default: try to execute any other command
+        int pid = fork();
+
+        if (pid == 0) // child process
+        {
+            execvp(args[0], args);
+            perror("Command failed"); // only reached if execvp fails
+            exit(1);
+        }
+        else if (pid > 0) // parent
+        {
+            wait(NULL); // wait for program to finish
+        }
+        else
+        {
+            perror("fork failed");
+        }
     }
     return 0;
 }
