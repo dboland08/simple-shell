@@ -7,7 +7,7 @@ using namespace std;
 
 void printPrompt()
 {
-    cout << "linux dboland08|> ";
+    cout << "linux dboland08|> " << flush;
 }
 
 int main()
@@ -41,12 +41,66 @@ int main()
         }
         args[i] = NULL;
 
-        // built in command for E
+        // echo command
         if (strcmp(args[0], "E") == 0)
-        { 
+        {
             for (int j = 1; j < i; ++j)
                 cout << args[j] << " ";
             cout << endl;
+            continue;
+        }
+        // clear shell command
+        if (strcmp(args[0], "W") == 0)
+        {
+            char *clearArgs[] = {(char *)"clear", NULL};
+            int pid = fork();
+            if (pid == 0)
+            {
+                execvp("clear", clearArgs);
+                perror("execvp failed"); // prints error if clear fails
+                exit(1);
+            }
+            else
+                wait(NULL);
+            continue;
+        }
+        // print working directory command
+        if (strcmp(args[0], "L") == 0)
+        {
+            cout << endl;
+
+            // run pwd
+            int pid = fork();
+
+            if (pid == 0)
+            {
+                char *pwdArgs[] = {(char *)"pwd", NULL};
+                execvp("pwd", pwdArgs);
+                perror("execvp failed");
+                exit(1);
+            }
+            else
+            {
+                wait(NULL);
+            }
+
+            cout << endl;
+
+            // run ls -l
+            pid = fork();
+
+            if (pid == 0)
+            {
+                char *lsArgs[] = {(char *)"ls", (char *)"-l", NULL};
+                execvp("ls", lsArgs);
+                perror("execvp failed");
+                exit(1);
+            }
+            else
+            {
+                wait(NULL);
+            }
+
             continue;
         }
     }
