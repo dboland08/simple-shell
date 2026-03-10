@@ -166,6 +166,40 @@ int main()
 
             continue;
         }
+
+        // copy file content to another
+        if (strcmp(args[0], "C") == 0)
+        {
+            if (i < 3) // check if both source and destination are provided
+            {
+                cout << "Usage: C source_file destination_file" << endl;
+                continue;
+            }
+
+            int pid = fork();
+
+            if (pid == 0) // child process
+            {
+                // prepare arguments for cp
+                char *cpArgs[] = {(char *)"cp", args[1], args[2], NULL};
+
+                execvp("cp", cpArgs);
+
+                // if execvp fails
+                perror("cp failed");
+                exit(1);
+            }
+            else if (pid > 0) // parent process
+            {
+                wait(NULL); // wait until child finishes copying
+            }
+            else
+            {
+                perror("fork failed");
+            }
+
+            continue;
+        }
     }
     return 0;
 }
