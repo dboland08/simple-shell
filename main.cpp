@@ -64,7 +64,7 @@ int main()
                 wait(NULL);
             continue;
         }
-        // print working directory command
+        // print working directory command with ls-l
         if (strcmp(args[0], "L") == 0)
         {
             cout << endl;
@@ -103,6 +103,38 @@ int main()
 
             continue;
         }
+
+        // make new file command
+        if (strcmp(args[0], "M") == 0)
+        {
+            if (i < 2) // no filename provided
+            {
+                cout << "Usage: M filename" << endl;
+                continue;
+            }
+
+            int pid = fork();
+
+            if (pid == 0) // child
+            {
+                // prepare arguments for nano
+                char *nanoArgs[] = {(char *)"nano", args[1], NULL};
+                execvp("nano", nanoArgs);
+                perror("nano failed");
+                exit(1);
+            }
+            else if (pid > 0) // parent
+            {
+                wait(NULL); // wait for nano to finish
+            }
+            else
+            {
+                perror("fork failed");
+            }
+
+            continue;
+        }
+        
     }
     return 0;
 }
