@@ -252,7 +252,39 @@ int main()
             cout << "<W>\n";
             cout << "  Wipe; clear the screen\n";
             cout << "<X program>\n";
-            cout <<"  Execute the named program\n";
+            cout << "  Execute the named program\n";
+        }
+
+        // built-in command X
+        if (strcmp(args[0], "X") == 0)
+        {
+            if (i < 2) // no program provided
+            {
+                cout << "Usage: X program [args...]" << endl;
+                continue;
+            }
+
+            int pid = fork();
+
+            if (pid == 0) // child process
+            {
+                // args+1 points to program and its arguments
+                execvp(args[1], &args[1]);
+
+                // if execvp fails
+                perror("execvp failed");
+                exit(1);
+            }
+            else if (pid > 0) // parent process
+            {
+                wait(NULL); // wait until child finishes
+            }
+            else
+            {
+                perror("fork failed");
+            }
+
+            continue;
         }
     }
     return 0;
