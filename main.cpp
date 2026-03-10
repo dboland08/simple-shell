@@ -5,9 +5,10 @@
 
 using namespace std;
 
+// default prompt in shell
 void printPrompt()
 {
-    cout << "linux dboland08|> " << flush;
+    cout << "linux djb221|> " << flush;
 }
 
 int main()
@@ -41,7 +42,7 @@ int main()
         }
         args[i] = NULL;
 
-        // echo command
+        // echo the argument
         if (strcmp(args[0], "E") == 0)
         {
             for (int j = 1; j < i; ++j)
@@ -49,29 +50,31 @@ int main()
             cout << endl;
             continue;
         }
-        // clear shell command
+
+        // clear shell
         if (strcmp(args[0], "W") == 0)
         {
             char *clearArgs[] = {(char *)"clear", NULL};
             int pid = fork();
-            if (pid == 0)
+            if (pid == 0) // child
             {
                 execvp("clear", clearArgs);
                 perror("execvp failed"); // prints error if clear fails
                 exit(1);
             }
+            else if (pid > 0) // parent
+                wait(NULL); // wait for shell to finish clearing
             else
-                wait(NULL);
+                perror("fork failed");
             continue;
         }
-        // print working directory command with ls-l
+
+        // print working directory with ls-l
         if (strcmp(args[0], "L") == 0)
         {
             cout << endl;
-
             // run pwd
             int pid = fork();
-
             if (pid == 0)
             {
                 char *pwdArgs[] = {(char *)"pwd", NULL};
@@ -79,32 +82,29 @@ int main()
                 perror("execvp failed");
                 exit(1);
             }
+            else if (pid > 0)
+                wait(NULL); // wait for directory to finish printing
             else
-            {
-                wait(NULL);
-            }
-
+                perror("fork failed");
             cout << endl;
 
             // run ls -l
             pid = fork();
-
-            if (pid == 0)
+            if (pid == 0) // child
             {
                 char *lsArgs[] = {(char *)"ls", (char *)"-l", NULL};
                 execvp("ls", lsArgs);
                 perror("execvp failed");
                 exit(1);
             }
+            else if (pid > 0) 
+                wait(NULL); // wait for directory to finish printing
             else
-            {
-                wait(NULL);
-            }
-
+                perror("fork failed");
             continue;
         }
 
-        // make new file command
+        // make new file
         if (strcmp(args[0], "M") == 0)
         {
             if (i < 2) // no filename provided
@@ -112,9 +112,7 @@ int main()
                 cout << "Usage: M filename" << endl;
                 continue;
             }
-
             int pid = fork();
-
             if (pid == 0) // child
             {
                 // prepare arguments for nano
@@ -124,17 +122,13 @@ int main()
                 exit(1);
             }
             else if (pid > 0) // parent
-            {
                 wait(NULL); // wait for nano to finish
-            }
             else
-            {
                 perror("fork failed");
-            }
-
             continue;
         }
-        // built-in command P
+
+        // print file content 
         if (strcmp(args[0], "P") == 0)
         {
             if (i < 2) // no filename provided
@@ -142,28 +136,19 @@ int main()
                 cout << "Usage: P filename" << endl;
                 continue;
             }
-
             int pid = fork();
-
             if (pid == 0) // child process
             {
                 // prepare arguments for 'more'
                 char *moreArgs[] = {(char *)"more", args[1], NULL};
                 execvp("more", moreArgs);
-
-                // if execvp fails
                 perror("more failed");
                 exit(1);
             }
             else if (pid > 0) // parent process
-            {
                 wait(NULL); // wait until the child process exits
-            }
             else
-            {
                 perror("fork failed");
-            }
-
             continue;
         }
 
@@ -177,7 +162,6 @@ int main()
             }
 
             int pid = fork();
-
             if (pid == 0) // child process
             {
                 // prepare arguments for cp
@@ -190,14 +174,9 @@ int main()
                 exit(1);
             }
             else if (pid > 0) // parent process
-            {
                 wait(NULL); // wait until child finishes copying
-            }
             else
-            {
                 perror("fork failed");
-            }
-
             continue;
         }
 
@@ -209,23 +188,16 @@ int main()
                 cout << "Usage: D filename" << endl;
                 continue;
             }
-
             int pid = fork();
-
-            if (pid == 0)
+            if (pid == 0) //
             {
                 char *cpArgs[] = {(char *)"rm", args[1], NULL};
                 execvp("rm", cpArgs);
             }
             else if (pid >= 0)
-            {
-                wait(NULL);
-            }
+                wait(NULL); // wait until child finishes deleting
             else
-            {
                 perror("fork failed");
-            }
-
             continue;
         }
 
@@ -265,25 +237,17 @@ int main()
             }
 
             int pid = fork();
-
             if (pid == 0) // child process
             {
                 // args+1 points to program and its arguments
                 execvp(args[1], &args[1]);
-
-                // if execvp fails
                 perror("execvp failed");
                 exit(1);
             }
             else if (pid > 0) // parent process
-            {
                 wait(NULL); // wait until child finishes
-            }
             else
-            {
                 perror("fork failed");
-            }
-
             continue;
         }
 
@@ -297,13 +261,10 @@ int main()
             exit(1);
         }
         else if (pid > 0) // parent
-        {
             wait(NULL); // wait for program to finish
-        }
         else
-        {
             perror("fork failed");
-        }
     }
+
     return 0;
 }
